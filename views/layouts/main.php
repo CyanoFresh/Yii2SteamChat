@@ -7,7 +7,6 @@ use app\assets\HandlebarsAsset;
 use yii\helpers\Html;
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
-use yii\widgets\ActiveForm;
 use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
 
@@ -26,7 +25,7 @@ var USERNAME = "' . Yii::$app->user->identity->username . '";
     <meta charset="<?= Yii::$app->charset ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <?= Html::csrfMetaTags() ?>
-    <title><?= Html::encode($this->title) ?></title>
+    <title><?= Yii::$app->name ?> - <?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
 </head>
 <body>
@@ -35,7 +34,7 @@ var USERNAME = "' . Yii::$app->user->identity->username . '";
 <div class="wrap">
     <?php
     NavBar::begin([
-        'brandLabel' => 'My Company',
+        'brandLabel' => Yii::$app->name,
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar-inverse navbar-fixed-top',
@@ -73,11 +72,11 @@ var USERNAME = "' . Yii::$app->user->identity->username . '";
             <div class="col-sm-6 col-sm-offset-3">
                 <div class="chat panel panel-default">
                     <div class="panel-heading">
-                        Чат
+                        Chat
                     </div>
                     <div class="panel-body">
                         <div id="chat">
-                            <?php foreach (\app\models\Message::find()->limit(15)->all() as $msg): ?>
+                            <?php foreach (\app\models\Message::find()->limit(8)->orderBy('date DESC')->all() as $msg): ?>
                                 <div class="chat-post" data-steamid="<?= $msg->steamid ?>">
                                     <a href="<?= $msg->user->profile_url ?>" target="_blank">
                                         <img class="chat-avatar img-circle" src="<?= $msg->user->avatar_md ?>">
@@ -97,9 +96,9 @@ var USERNAME = "' . Yii::$app->user->identity->username . '";
                             <div class="input-group">
                                 <input type="text" class="form-control" id="message" placeholder="Message..."
                                        autocomplete="off">
-                        <span class="input-group-btn">
-                            <button class="btn btn-default" type="submit">Send</button>
-                        </span>
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" type="submit">Send</button>
+                                </span>
                             </div>
                         </form>
                     </div>
@@ -107,22 +106,21 @@ var USERNAME = "' . Yii::$app->user->identity->username . '";
             </div>
         </div>
 
-
         <?= $content ?>
     </div>
 </div>
 
 <footer class="footer">
     <div class="container">
-        <p class="pull-left">&copy; My Company <?= date('Y') ?></p>
-
-        <p class="pull-right"><?= Yii::powered() ?></p>
+        <p class="pull-left">&copy; <?= Yii::$app->name ?> <?= date('Y') ?></p>
     </div>
 </footer>
 
 <script id="chat-post" type="text/x-handlebars-template">
-    <div class="chat-post" data-steamid="{{steamid}}">
-        <a href="{{profile_url}}" target="_blank"><img class="chat-avatar" src="{{avatar}}"></a>
+    <div class="chat-post" data-steamid="{{steamid}}" data-messageid="{{id}}">
+        <a href="{{profile_url}}" target="_blank">
+            <img class="chat-avatar img-circle" src="{{avatar}}">
+        </a>
         <dl class="chat-body">
             <dt class="username"><a href="{{profile_url}}" target="_blank">{{username}}</a></dt>
             <dd class="message">{{message}}</dd>

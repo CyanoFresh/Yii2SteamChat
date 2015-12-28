@@ -33,7 +33,10 @@ class Chat implements MessageComponentInterface
         ]);
 
         if (!$user) {
-            echo "Failed to login!\n";
+            echo 'Wrong token or steamid: steamID: "' . $steamid . '", token: "' . $token . '", IP: ' . $conn->remoteAddress . ', time: ' . $time . "\n";
+            Yii::info('Wrong token or steamid: steamID: "' . $steamid . '", token: "' . $token . '", IP: ' . $conn->remoteAddress . ', time: ' . $time,
+                'chat');
+            $conn->close();
             return;
         }
 
@@ -41,7 +44,10 @@ class Chat implements MessageComponentInterface
 
         $this->clients->attach($conn);
 
-        echo "New connection!\n";
+        Yii::info('Connected: steamID: "' . $steamid . '", token: "' . $token . '", IP: ' . $conn->remoteAddress,
+            'chat');
+
+        echo 'Connected: steamID: "' . $steamid . '", token: "' . $token . '", IP: ' . $conn->remoteAddress . "\n";
     }
 
     public function onMessage(ConnectionInterface $from, $msg)
@@ -61,15 +67,24 @@ class Chat implements MessageComponentInterface
                 'avatar' => $from->User->avatar_md,
                 'profile_url' => $from->User->profile_url,
                 'message' => $msg,
+                'id' => $model->id,
             ]));
         }
+
+        Yii::info('Message: steamID: "' . $from->User->steamid . '", message: "' . $msg . '", IP: ' . $from->remoteAddress,
+            'chat');
+
+        echo 'Message: steamID: "' . $from->User->steamid . '", message: "' . $msg . '", IP: ' . $from->remoteAddress . "\n";
     }
 
     public function onClose(ConnectionInterface $conn)
     {
         $this->clients->detach($conn);
 
-        echo "Connection {$conn->resourceId} has disconnected\n";
+        $conn->User->generateAuthKey();
+        $conn->User->save();
+
+        echo "Connection {$conn->User->steamid} has disconnected\n";
     }
 
     public function onError(ConnectionInterface $conn, \Exception $e)

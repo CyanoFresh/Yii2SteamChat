@@ -113,6 +113,10 @@ a.desc:after {
     margin-bottom: 20px;
 }
 
+.chat-post a:hover {
+    text-decoration: none;
+}
+
 .chat-post + .chat-post {
     border-top: 1px #efefef solid;
     padding-top: 20px;

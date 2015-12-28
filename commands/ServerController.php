@@ -8,9 +8,9 @@ use Ratchet\Http\HttpServer;
 use Ratchet\WebSocket\WsServer;
 use yii\console\Controller;
 
-class SocketController extends Controller
+class ServerController extends Controller
 {
-    public function actionRun()
+    public function actionIndex($port = 8080)
     {
         $server = IoServer::factory(
             new HttpServer(
@@ -18,10 +18,10 @@ class SocketController extends Controller
                     new Chat()
                 )
             ),
-            8080
+            $port
         );
 
-        echo 'Server started' . "\n";
+        echo 'Server running on port: ' . $port . "\n";
 
         $server->run();
     }

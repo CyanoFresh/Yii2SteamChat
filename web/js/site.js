@@ -32,13 +32,17 @@ function connect() {
 
                     $(html).appendTo('#chat');
 
-                    $(html).animate({
-                        scrollTop: $(html).height()
-                    }, 300);
+                    scrollToBottom();
                 };
             }
         }
     });
+}
+
+function scrollToBottom() {
+    var wtf    = $('.chat .panel-body');
+    var height = wtf[0].scrollHeight;
+    wtf.scrollTop(height);
 }
 
 $(document).ready(function () {
@@ -49,28 +53,12 @@ $(document).ready(function () {
 
         var message = $('#message').val();
 
-        WS.send(message);
+        if (message !== '') {
+            WS.send(message);
 
-        $('#message').val('');
+            $('#message').val('');
+        }
     });
+
+    scrollToBottom();
 });
-
-
-//var socket = new WebSocket('ws://localhost:8080');
-
-//socket.onopen = function(e) {
-//    console.log("Connection established!");
-//};
-//
-//socket.onmessage = function(e) {
-//    data = $.parseJSON(e.data);
-//    $('<div class="log"><div class="author">' + data.author + '</div><div class="message">' + data.message + '</div></div>').insertAfter('.log:last');
-//    console.log(data);
-//};
-//
-//$('button').on('click', function (event) {
-//    event.preventDefault();
-//
-//    socket.send($('#message').val());
-//    $('#message').val('');
-//});
